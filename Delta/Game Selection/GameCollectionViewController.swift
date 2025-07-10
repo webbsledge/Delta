@@ -12,7 +12,9 @@ import MobileCoreServices
 import AVFoundation
 import RegexBuilder
 
-import DeltaCore
+// Access UIWindowScene.isStageManagerEnabled
+@_spi(Internal) import DeltaCore
+
 import MelonDSDeltaCore
 
 import Roxas
@@ -1326,8 +1328,19 @@ extension GameCollectionViewController
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
         guard self.gameCollection?.identifier != GameType.unknown.rawValue else { return }
-        
-        self.launchGame(at: indexPath, clearScreen: true)
+
+        // Check for iOS 26, setting toggled on, and stage manager enabled, then open game in new window
+        if #available(iOS 26, *),
+           Settings.opensGamesInNewWindow,
+           let windowScene = self.view.window?.windowScene, windowScene.isStageManagerEnabled //only true on iPad
+        {
+            let game = self.dataSource.item(at: indexPath)
+            self.openInNewWindow(game)
+        }
+        else
+        {
+            self.launchGame(at: indexPath, clearScreen: true)
+        }
     }
 }
 
