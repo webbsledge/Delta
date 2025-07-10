@@ -358,8 +358,38 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Multitasking" footerTitle="Automatically pause games when they are not the active window." id="vbO-8P-7Mc">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SwitchCell" id="ei2-rB-x25" customClass="SwitchTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SwitchCell" id="Spz-wL-TZ6" customClass="SwitchTableViewCell">
                                         <rect key="frame" x="16" y="1152" width="343" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Spz-wL-TZ6" id="HTu-0K-Ot8">
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Open Games in New Window" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yQG-GF-gkg">
+                                                    <rect key="frame" x="16" y="12" width="254" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lLe-6t-hH8">
+                                                    <rect key="frame" x="278" y="6.5" width="51" height="31"/>
+                                                    <color key="onTintColor" name="Purple"/>
+                                                    <connections>
+                                                        <action selector="toggleOpensGamesInNewWindow:" destination="eHi-aO-uGS" eventType="primaryActionTriggered" id="Nls-TZ-zv4"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="lLe-6t-hH8" secondAttribute="trailing" id="602-DV-2o2"/>
+                                                <constraint firstItem="lLe-6t-hH8" firstAttribute="centerY" secondItem="HTu-0K-Ot8" secondAttribute="centerY" id="6hm-gH-Xxh"/>
+                                                <constraint firstItem="yQG-GF-gkg" firstAttribute="centerY" secondItem="HTu-0K-Ot8" secondAttribute="centerY" id="EnE-6U-Diq"/>
+                                                <constraint firstItem="lLe-6t-hH8" firstAttribute="leading" secondItem="yQG-GF-gkg" secondAttribute="trailing" constant="8" symbolic="YES" id="Iiu-YJ-vBo"/>
+                                                <constraint firstItem="yQG-GF-gkg" firstAttribute="leading" secondItem="HTu-0K-Ot8" secondAttribute="leadingMargin" id="RgE-fv-z9C"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SwitchCell" id="ei2-rB-x25" customClass="SwitchTableViewCell">
+                                        <rect key="frame" x="16" y="1196" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ei2-rB-x25" id="I6x-Y3-r6U">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -913,6 +943,7 @@ Menu + Long-Press: Quick Load</string>
                         <outlet property="controllerOpacitySlider" destination="whi-If-wFf" id="6Cx-HY-xLG"/>
                         <outlet property="exportLogActivityIndicatorView" destination="x5w-dE-ucW" id="u5a-K3-2ag"/>
                         <outlet property="layoutScreensHorizontallySwitch" destination="Wd1-1b-Ee4" id="8LS-Ix-lQz"/>
+                        <outlet property="opensGamesInNewWindowSwitch" destination="lLe-6t-hH8" id="UiO-r7-5IU"/>
                         <outlet property="pauseWhileInactiveSwitch" destination="eeQ-UP-b2W" id="Gde-DL-tO2"/>
                         <outlet property="previewsEnabledSwitch" destination="OJE-9e-9i3" id="Ndg-eN-PPs"/>
                         <outlet property="quickGesturesSwitch" destination="6LN-kh-Afv" id="1Vu-6Q-793"/>

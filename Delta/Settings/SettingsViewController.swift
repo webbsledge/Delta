@@ -67,6 +67,12 @@ private extension SettingsViewController
         case experimentalFeatures
     }
     
+    enum MultitaskingRow: Int, CaseIterable
+    {
+        case pauseWhileInactive
+        case opensGamesInNewWindow
+    }
+    
     enum PatreonRow: Int, CaseIterable
     {
         case joinPatreon
@@ -101,6 +107,7 @@ class SettingsViewController: UITableViewController
     @IBOutlet private var thumbstickHapticFeedbackEnabledSwitch: UISwitch!
     @IBOutlet private var previewsEnabledSwitch: UISwitch!
     @IBOutlet private var quickGesturesSwitch: UISwitch!
+    @IBOutlet private var opensGamesInNewWindowSwitch: UISwitch!
     
     @IBOutlet private var versionLabel: UILabel!
     
@@ -250,6 +257,8 @@ private extension SettingsViewController
         self.supportExternalDisplaysSwitch.isOn = Settings.supportsExternalDisplays
         self.topScreenOnlySwitch.isOn = Settings.features.dsAirPlay.topScreenOnly
         self.layoutScreensHorizontallySwitch.isOn = (Settings.features.dsAirPlay.layoutAxis == .horizontal)
+        
+        self.opensGamesInNewWindowSwitch.isOn = Settings.opensGamesInNewWindow
         
         self.syncingServiceLabel.text = Settings.syncingService?.localizedName
         
@@ -427,6 +436,11 @@ private extension SettingsViewController
         Settings.isQuickGesturesEnabled = sender.isOn
     }
     
+    @IBAction func toggleOpensGamesInNewWindow(_ sender: UISwitch)
+    {
+        Settings.opensGamesInNewWindow = sender.isOn
+    }
+    
     func openTwitter(username: String)
     {
         let twitterAppURL = URL(string: "twitter://user?screen_name=" + username)!
@@ -591,7 +605,7 @@ private extension SettingsViewController
                 self.tableView.selectRow(at: selectedIndexPath, animated: true, scrollPosition: .none)
             }
             
-        case .localControllerPlayerIndex, .preferredControllerSkin, .translucentControllerSkinOpacity, .respectSilentMode, .isButtonHapticFeedbackEnabled, .isThumbstickHapticFeedbackEnabled, .isAltJITEnabled: break
+        case .localControllerPlayerIndex, .preferredControllerSkin, .translucentControllerSkinOpacity, .respectSilentMode, .isButtonHapticFeedbackEnabled, .isThumbstickHapticFeedbackEnabled, .isAltJITEnabled, .opensGamesInNewWindow: break
         default: break
         }
     }
@@ -645,6 +659,8 @@ extension SettingsViewController
             }
             
             return numberOfRows
+            
+        case .multitasking: return MultitaskingRow.allCases.count
             
         case .syncing where !isSectionHidden(section): return SyncManager.shared.coordinator?.account == nil ? 1 : super.tableView(tableView, numberOfRowsInSection: sectionIndex)
         case .advanced where !isSectionHidden(section):

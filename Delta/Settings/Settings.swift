@@ -36,6 +36,7 @@ extension Settings.Name
     static let isQuickGesturesEnabled: Settings.Name = "isQuickGesturesEnabled"
     static let preferredWFCServer: Settings.Name = "preferredWFCServer"
     static let customWFCServer: Settings.Name = "customWFCServer"
+    static let opensGamesInNewWindow: Settings.Name = "opensGamesInNewWindow"
 }
 
 extension Settings
@@ -69,6 +70,7 @@ struct Settings
                         #keyPath(UserDefaults.pauseWhileInactive): true,
                         #keyPath(UserDefaults.supportsExternalDisplays): true,
                         #keyPath(UserDefaults.isQuickGesturesEnabled): true,
+                        #keyPath(UserDefaults.opensGamesInNewWindow): true,
                         Settings.preferredCoreSettingsKey(for: .ds): MelonDS.core.identifier] as [String : Any]
         
         #if BETA
@@ -274,6 +276,17 @@ extension Settings
         set {
             UserDefaults.standard.isQuickGesturesEnabled = newValue
             NotificationCenter.default.post(name: Settings.didChangeNotification, object: nil, userInfo: [NotificationUserInfoKey.name: Name.isQuickGesturesEnabled])
+        }
+    }
+    
+    static var opensGamesInNewWindow: Bool {
+        get {
+            let opensGamesInNewWindow = UserDefaults.standard.opensGamesInNewWindow
+            return opensGamesInNewWindow
+        }
+        set {
+            UserDefaults.standard.opensGamesInNewWindow = newValue
+            NotificationCenter.default.post(name: Settings.didChangeNotification, object: nil, userInfo: [NotificationUserInfoKey.name: Name.opensGamesInNewWindow])
         }
     }
     
@@ -586,4 +599,6 @@ private extension UserDefaults
     
     @NSManaged var preferredWFCServer: String?
     @NSManaged var customWFCServer: String?
+    
+    @NSManaged var opensGamesInNewWindow: Bool
 }
