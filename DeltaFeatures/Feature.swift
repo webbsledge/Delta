@@ -14,8 +14,11 @@ public struct EmptyOptions
     public init() {}
 }
 
+// When Disabled == Bool, we interpret that to mean the Feature is an EnabledFeature (i.e. can be enabled/disabled).
+extension Feature: EnabledFeature where Disabled == Bool {}
+
 @propertyWrapper @dynamicMemberLookup
-public final class Feature<Options>: _AnyFeature
+public final class Feature<Options, Disabled>: _AnyFeature
 {
     public let name: LocalizedStringKey
     public let description: LocalizedStringKey?
@@ -29,30 +32,28 @@ public final class Feature<Options>: _AnyFeature
         return SettingsName(rawValue: self.key)
     }
     
-    public var isEnabled: Bool {
-        get {
-            let isEnabled = UserDefaults.standard.bool(forKey: self.key)
-            return isEnabled
-        }
-        set {
-            self.objectWillChange.send()
-            UserDefaults.standard.set(newValue, forKey: self.key)
-            
-            NotificationCenter.default.post(name: .settingsDidChange, object: nil, userInfo: [SettingsUserInfoKey.name: self.settingsKey, SettingsUserInfoKey.value: newValue])
-        }
-    }
-    
     public var wrappedValue: some Feature {
         return self
     }
     
     private var options: Options
     
-    public init(name: LocalizedStringKey, description: LocalizedStringKey? = nil, detailedDescription: LocalizedStringKey? = nil, options: Options = EmptyOptions())
+    public init(name: LocalizedStringKey, description: LocalizedStringKey? = nil, detailedDescription: LocalizedStringKey? = nil, options: Options = EmptyOptions()) where Disabled == Bool
     {
         self.name = name
         self.description = description
         self.detailedDescription = detailedDescription
+        self.options = options
+        
+        self.prepareOptions()
+    }
+    
+    // Always-enabled Features must provide Options (otherwise we should just remove the Feature entirely).
+    public init(enabledWith options: Options) where Disabled == Never
+    {
+        self.name = ""
+        self.description = nil
+        self.detailedDescription = nil
         self.options = options
         
         self.prepareOptions()

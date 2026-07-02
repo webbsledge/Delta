@@ -52,7 +52,10 @@ struct ExperimentalFeaturesView: View
             }
             
             ForEach(viewModel.sortedFeatures, id: \.key) { feature in
-                section(for: feature)
+                if let enabledFeature = feature as? any EnabledFeature
+                {
+                    section(for: enabledFeature)
+                }
             }
         }
         .listStyle(.insetGrouped)
@@ -62,7 +65,7 @@ struct ExperimentalFeaturesView: View
     
     // Cannot open existential if return type uses concrete type T in non-covariant position (e.g. Box<T>).
     // So instead we erase return type to AnyView.
-    private func section<T: AnyFeature>(for feature: T) -> AnyView
+    private func section<T: EnabledFeature>(for feature: T) -> AnyView
     {
         let section = FeatureSection(feature: feature)
         return AnyView(section)
@@ -82,7 +85,7 @@ extension ExperimentalFeaturesView
     }
 }
 
-private struct FeatureSection<T: AnyFeature>: View
+private struct FeatureSection<T: EnabledFeature>: View
 {
     @ObservedObject
     var feature: T

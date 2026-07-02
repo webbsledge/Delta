@@ -10,7 +10,7 @@ import SwiftUI
 
 import DeltaFeatures
 
-struct FeatureDetailView<Feature: AnyFeature>: View
+struct FeatureDetailView<Feature: EnabledFeature>: View
 {
     @ObservedObject
     var feature: Feature

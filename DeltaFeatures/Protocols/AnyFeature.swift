@@ -20,8 +20,6 @@ public protocol AnyFeature<Options>: ObservableObject, Identifiable
     var key: String { get }
     var settingsKey: SettingsName { get }
     
-    var isEnabled: Bool { get set }
-    
     var allOptions: [any AnyOption] { get }
     
     subscript<T>(dynamicMember keyPath: KeyPath<Options, T>) -> T { get set }

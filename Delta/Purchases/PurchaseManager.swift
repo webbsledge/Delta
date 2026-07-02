@@ -8,6 +8,7 @@
 
 import Foundation
 import StoreKit
+import DeltaFeatures
 
 extension PurchaseManager
 {
@@ -65,6 +66,7 @@ class PurchaseManager
         // Experimental Features no longer available, so disable them.
         for feature in ExperimentalFeatures.shared.allFeatures
         {
+            guard let feature = feature as? any EnabledFeature else { continue }
             feature.isEnabled = false
         }
     }
