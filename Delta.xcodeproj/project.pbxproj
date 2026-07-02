@@ -262,7 +262,7 @@
 		D5A817B329DF6C6C00904AFE /* ExperimentalFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A817B229DF6C6C00904AFE /* ExperimentalFeatures.swift */; };
 		D5A98CE2284EF14B00E023E5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A98CE1284EF14B00E023E5 /* SceneDelegate.swift */; };
 		D5A9C00329DDED6D00A8D610 /* ExperimentalFeaturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9C00229DDED6D00A8D610 /* ExperimentalFeaturesView.swift */; };
-		D5A9C01D29DE058C00A8D610 /* VariableFastForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9C01C29DE058C00A8D610 /* VariableFastForward.swift */; };
+		D5A9C01D29DE058C00A8D610 /* CustomFastForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9C01C29DE058C00A8D610 /* CustomFastForward.swift */; };
 		D5AA0F0E2CE3F39F0015D134 /* PatreonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AA0F0D2CE3F3990015D134 /* PatreonViewController.swift */; };
 		D5AA0F102CE3F3CC0015D134 /* PatreonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AA0F0F2CE3F3C90015D134 /* PatreonComponents.swift */; };
 		D5AA0F122CE3F4FB0015D134 /* ManagedPatron.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AA0F112CE3F4FB0015D134 /* ManagedPatron.swift */; };
@@ -866,7 +866,7 @@
 		D5A9BFFD29DDECF100A8D610 /* Feature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		D5A9C00229DDED6D00A8D610 /* ExperimentalFeaturesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalFeaturesView.swift; sourceTree = "<group>"; };
 		D5A9C01929DDFBDD00A8D610 /* SettingsName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsName.swift; sourceTree = "<group>"; };
-		D5A9C01C29DE058C00A8D610 /* VariableFastForward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableFastForward.swift; sourceTree = "<group>"; };
+		D5A9C01C29DE058C00A8D610 /* CustomFastForward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFastForward.swift; sourceTree = "<group>"; };
 		D5AA0F0D2CE3F3990015D134 /* PatreonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatreonViewController.swift; sourceTree = "<group>"; };
 		D5AA0F0F2CE3F3C90015D134 /* PatreonComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatreonComponents.swift; sourceTree = "<group>"; };
 		D5AA0F112CE3F4FB0015D134 /* ManagedPatron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedPatron.swift; sourceTree = "<group>"; };
@@ -1845,7 +1845,6 @@
 		D58F39CB29E0A9C8008B4100 /* Features */ = {
 			isa = PBXGroup;
 			children = (
-				D5A9C01C29DE058C00A8D610 /* VariableFastForward.swift */,
 				AC1C990F29F8B8C30020E6E4 /* ToastNotificationOptions.swift */,
 				D5147EC72A817B4A00D6CD64 /* ReviewSaveStatesOptions.swift */,
 				D5A287242C23A1AC009883C3 /* SkinDebugging.swift */,
@@ -1917,6 +1916,7 @@
 			children = (
 				D5ADD12129F33FBF00CE0560 /* Features.swift */,
 				D5D78AE429F9BC3700E064F0 /* DSAirPlay.swift */,
+				D5A9C01C29DE058C00A8D610 /* CustomFastForward.swift */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -2512,7 +2512,7 @@
 				D5363C462F5BA9B40065182B /* ContainerRelativeGrid.swift in Sources */,
 				D58C548F2FCAC43E00B408BA /* Delta11ToDelta12.xcmappingmodel in Sources */,
 				D552DE3A2D39C5A500E737BE /* WFCServersView.swift in Sources */,
-				D5A9C01D29DE058C00A8D610 /* VariableFastForward.swift in Sources */,
+				D5A9C01D29DE058C00A8D610 /* CustomFastForward.swift in Sources */,
 				C6F24AD92D64B550002F939F /* PauseViewController+Lu.swift in Sources */,
 				BFE593CA21F3F8B7003412A6 /* GameSave.swift in Sources */,
 				E6EB10AF2F58B1C50001AAD2 /* AchievementNotification.swift in Sources */,

@@ -1435,8 +1435,7 @@ extension GameViewController
             {
                 speed = speedValue
             }
-            else if ExperimentalFeatures.shared.variableFastForward.isEnabled,
-                    let preferredSpeed = ExperimentalFeatures.shared.variableFastForward[emulatorCore.game.type]
+            else if let preferredSpeed = Settings.features.customFastForward[emulatorCore.game.type]
             {
                 speed = preferredSpeed.rawValue
             }
@@ -1445,8 +1444,7 @@ extension GameViewController
                 speed = emulatorCore.deltaCore.supportedRates.upperBound
             }
 
-            if speed <= emulatorCore.deltaCore.supportedRates.upperBound ||
-                ExperimentalFeatures.shared.variableFastForward.allowUnrestrictedSpeeds
+            if speed <= emulatorCore.deltaCore.supportedRates.upperBound || Settings.features.customFastForward.allowUnrestrictedSpeeds
             {
                 emulatorCore.rate = speed
             }

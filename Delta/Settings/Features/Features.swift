@@ -14,8 +14,15 @@ extension Settings
     {
         static let shared = Features()
         
+        // Standard Features
+        
         @Feature(name: "DS AirPlay", options: DSAirPlayOptions())
         var dsAirPlay
+        
+        // Previous Experimental Features
+        
+        @Feature(enabledWith: CustomFastForwardOptions())
+        var customFastForward
         
         private init()
         {

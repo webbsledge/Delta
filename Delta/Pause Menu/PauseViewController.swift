@@ -284,7 +284,7 @@ private extension PauseViewController
         self.sustainButtonsItem = MenuItem(text: NSLocalizedString("Hold Buttons", comment: ""), image: #imageLiteral(resourceName: "SustainButtons"), action: { _ in })
         self.screenshotItem = MenuItem(text: NSLocalizedString("Screenshot", comment: ""), image: #imageLiteral(resourceName: "Screenshot"), action: { _ in })
         
-        if ExperimentalFeatures.shared.variableFastForward.isEnabled, let game = emulatorCore.game as? Game
+        if let game = emulatorCore.game as? Game
         {
             let menuOptions = self.makeFastForwardMenuOptions(for: game)
             self.fastForwardItem?.menuOptions = menuOptions ?? []

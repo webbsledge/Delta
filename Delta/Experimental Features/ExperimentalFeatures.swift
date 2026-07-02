@@ -16,11 +16,6 @@ struct ExperimentalFeatures: FeatureContainer
              description: "Customize the appearance of games when AirPlaying to your TV.")
     var airPlaySkins
     
-    @Feature(name: "Custom Fast Forward Speed",
-             description: "Change the preferred Fast Foward speed per-system. You can also change it by long-pressing the Fast Forward button from the Pause Menu.",
-             options: VariableFastForwardOptions())
-    var variableFastForward
-    
     @Feature(name: "Show Status Bar",
              description: "Enable to show the Status Bar during gameplay.")
     var showStatusBar

@@ -1,5 +1,5 @@
 //
-//  VariableFastForward.swift
+//  CustomFastForward.swift
 //  Delta
 //
 //  Created by Riley Testut on 4/5/23.
@@ -24,7 +24,7 @@ struct FastForwardSpeed: RawRepresentable
     {
         var range = range
         
-        if ExperimentalFeatures.shared.variableFastForward.allowUnrestrictedSpeeds
+        if Settings.features.customFastForward.allowUnrestrictedSpeeds
         {
             range = 1.0...8.0
         }
@@ -62,7 +62,7 @@ extension FastForwardSpeed: CustomStringConvertible, LocalizedOptionValue
     }
 }
 
-struct VariableFastForwardOptions
+struct CustomFastForwardOptions
 {
     // Alternatively, this feature could be implemented with single hidden dictionary @Option mapping preferred speeds to systems,
     // because we support changing these values by long-pressing the Fast Forward button in the pause menu.
@@ -96,7 +96,7 @@ struct VariableFastForwardOptions
     var allowUnrestrictedSpeeds: Bool = false
 }
 
-extension Feature where Options == VariableFastForwardOptions
+extension Feature where Options == CustomFastForwardOptions
 {
     subscript(gameType: GameType) -> FastForwardSpeed? {
         get {
