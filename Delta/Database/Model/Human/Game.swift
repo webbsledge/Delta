@@ -220,7 +220,7 @@ extension Game: Syncable
     }
     
     public var syncableKeys: Set<AnyKeyPath> {
-        return [\Game.artworkURL, \Game.filename, \Game.name, \Game.type]
+        return [\Game.artworkURL, \Game.filename, \Game.name, \Game.type, \Game.isFavorite]
     }
     
     public var syncableFiles: Set<File> {
