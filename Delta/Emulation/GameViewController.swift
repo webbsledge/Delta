@@ -178,7 +178,27 @@ class GameViewController: DeltaCore.GameViewController
     private var ignoreNextMenuInput = false
     private lazy var menuButtonGestureRecognizers = self.makeMenuButtonGestureRecognizers()
     private lazy var menuButtonKeyboardGestureRecognizers = self.makeMenuButtonGestureRecognizers()
+
+    private lazy var gameScreenRepositionGestureRecognizer: UILongPressGestureRecognizer = {
+        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(GameViewController.handleGameScreenRepositionGesture(_:)))
+        gestureRecognizer.delegate = self
+        return gestureRecognizer
+    }()
+    private var repositionAnchor: CGPoint? // Location where the current drag began.
+    private lazy var repositionFeedbackGenerator: UIImpactFeedbackGenerator = {
+        if #available(iOS 17.5, *)
+        {
+            return UIImpactFeedbackGenerator(style: .light, view: self.view)
+        }
+        else
+        {
+            return UIImpactFeedbackGenerator(style: .light)
+        }
+    }()
         
+    private var repositionResetButton: UIButton!
+    private var repositionResetButtonTimer: Timer?
+    
     // Sustain Buttons
     private var isSelectingSustainedButtons = false
     private var sustainInputsMapping: SustainInputsMapping?
@@ -433,14 +453,43 @@ extension GameViewController
         self.handoffPlaceholderView.activityIndicatorView.color = .white
         self.view.insertSubview(self.handoffPlaceholderView, aboveSubview: self.gameView)
         
+        // Reset Game Screen Position Button
+        var repositionResetButtonConfiguration: UIButton.Configuration
+        if #available(iOS 26, *)
+        {
+            repositionResetButtonConfiguration = .clearGlass()
+        }
+        else
+        {
+            repositionResetButtonConfiguration = .plain()
+            repositionResetButtonConfiguration.cornerStyle = .capsule
+            repositionResetButtonConfiguration.background.visualEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        }
+        repositionResetButtonConfiguration.baseForegroundColor = .red
+        repositionResetButtonConfiguration.title = NSLocalizedString("Reset", comment: "")
+        repositionResetButtonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 18, bottom: 12, trailing: 18)
+
+        self.repositionResetButton = UIButton(configuration: repositionResetButtonConfiguration, primaryAction: UIAction { [weak self] _ in
+            self?.resetGameScreenPosition()
+        })
+        self.repositionResetButton.translatesAutoresizingMaskIntoConstraints = false
+        self.repositionResetButton.alpha = 0.0
+        self.repositionResetButton.isHidden = true
+        self.view.addSubview(self.repositionResetButton)
+
         // Gestures
         for gestureRecognizer in self.menuButtonGestureRecognizers
         {
             self.view.addGestureRecognizer(gestureRecognizer)
         }
         
+        self.view.addGestureRecognizer(self.gameScreenRepositionGestureRecognizer)
+
         // Auto Layout
         NSLayoutConstraint.activate([
+            self.repositionResetButton.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            self.repositionResetButton.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+
             self.sustainButtonsContentView.leadingAnchor.constraint(equalTo: self.gameView.leadingAnchor),
             self.sustainButtonsContentView.trailingAnchor.constraint(equalTo: self.gameView.trailingAnchor),
             self.sustainButtonsContentView.topAnchor.constraint(equalTo: self.gameView.topAnchor),
@@ -934,6 +983,18 @@ private extension GameViewController
             }
         }
         
+        // Reapply the saved offset for the current orientation, or reset it when controls are present.
+        if self.repositionAnchor == nil
+        {
+            let distance = self.canRepositionGameScreen ? UserDefaults.standard.gameScreenOffset(for: traits) : 0
+            
+            switch traits.orientation
+            {
+            case .portrait: self.gameScreenOffset = CGPoint(x: 0, y: distance)
+            case .landscape: self.gameScreenOffset = CGPoint(x: distance, y: 0)
+            }
+        }
+
         self.view.setNeedsLayout()
     }
     
@@ -1772,6 +1833,33 @@ extension GameViewController
     {
         guard super.gestureRecognizer(gestureRecognizer, shouldReceive: touch) else { return false }
         
+        if gestureRecognizer == self.gameScreenRepositionGestureRecognizer
+        {
+            guard self.canRepositionGameScreen, !self.isMenuButtonHeldDown else { return false }
+
+            let location = touch.location(in: self.view)
+
+            // Begin only when touching a game screen (but not the DS touch screen).
+            let isTouchingGameScreen: Bool
+            if let traits = self.controllerView.controllerSkinTraits,
+               let screens = self.controllerView.controllerSkin?.screens(for: traits)
+            {
+                isTouchingGameScreen = zip(screens, self.gameViews).contains { screen, gameView in
+                    !screen.isTouchScreen && gameView.frame.contains(location)
+                }
+            }
+            else
+            {
+                isTouchingGameScreen = self.gameViews.contains { $0.frame.contains(location) }
+            }
+            
+            guard isTouchingGameScreen else { return false }
+
+            self.repositionFeedbackGenerator.prepare()
+
+            return true
+        }
+
         if self.menuButtonGestureRecognizers.contains(gestureRecognizer) || self.menuButtonKeyboardGestureRecognizers.contains(gestureRecognizer)
         {
             let shouldBegin = self.isMenuButtonHeldDown && Settings.isQuickGesturesEnabled
@@ -1807,10 +1895,131 @@ extension GameViewController
         gestureRecognizer.isEnabled = false
         gestureRecognizer.isEnabled = true
     }
+
+    @objc private func handleGameScreenRepositionGesture(_ gestureRecognizer: UILongPressGestureRecognizer)
+    {
+        guard let traits = self.controllerView.controllerSkinTraits else { return }
+        let location = gestureRecognizer.location(in: self.view)
+
+        switch gestureRecognizer.state
+        {
+        case .began:
+            self.repositionAnchor = location
+            self.showRepositionResetButton()
+            
+            if #available(iOS 17.5, *)
+            {
+                self.repositionFeedbackGenerator.impactOccurred(at: location)
+            }
+            else
+            {
+                self.repositionFeedbackGenerator.impactOccurred()
+            }
+
+        case .changed:
+            // Reposition screen through the offset (rather than moving the game view, which the layout would overwrite).
+            let distance = self.gameScreenDistance(to: location, for: traits)
+            
+            switch traits.orientation
+            {
+            case .portrait: self.gameScreenOffset = CGPoint(x: 0, y: distance)
+            case .landscape: self.gameScreenOffset = CGPoint(x: distance, y: 0)
+            }
+            
+            self.view.setNeedsLayout()
+
+        case .ended:
+            let distance = self.gameScreenDistance(to: location, for: traits)
+            UserDefaults.standard.setGameScreenOffset(distance, for: traits)
+            self.repositionAnchor = nil
+            self.hideRepositionResetButton(afterDelay: 3.0) // Match the toast auto-dismiss duration.
+
+        case .cancelled, .failed:
+            self.repositionAnchor = nil
+            self.hideRepositionResetButton(afterDelay: 3.0)
+
+        default: break
+        }
+    }
 }
 
 private extension GameViewController
 {
+    // True when on-screen controls are hidden (for DS, via TouchControllerSkin).
+    var canRepositionGameScreen: Bool
+    {
+        return self.controllerView.isHidden || self.controllerView.controllerSkin is TouchControllerSkin
+    }
+
+    // Distance the game view has been dragged along its movable axis, clamped within the screen bounds.
+    func gameScreenDistance(to location: CGPoint, for traits: DeltaCore.ControllerSkin.Traits) -> CGFloat
+    {
+        guard let anchor = self.repositionAnchor else { return 0 }
+
+        // Union of all game views (so the clamp accounts for both screens on DS).
+        let gameSize = self.gameViews.reduce(CGRect.null) { $0.union($1.frame) }.size
+        let screenSize = self.view.bounds.size
+
+        let distance: CGFloat
+        let maxDistance: CGFloat
+        switch traits.orientation
+        {
+        case .portrait:
+            distance = UserDefaults.standard.gameScreenOffset(for: traits) + (location.y - anchor.y)
+            maxDistance = (screenSize.height - gameSize.height) / 2
+        case .landscape:
+            distance = UserDefaults.standard.gameScreenOffset(for: traits) + (location.x - anchor.x)
+            maxDistance = (screenSize.width - gameSize.width) / 2
+        }
+
+        return min(max(distance, -maxDistance), maxDistance)
+    }
+
+    func resetGameScreenPosition()
+    {
+        self.hideRepositionResetButton()
+
+        guard let traits = self.controllerView.controllerSkinTraits else { return }
+
+        UserDefaults.standard.setGameScreenOffset(0, for: traits)
+        self.repositionAnchor = nil
+
+        self.gameScreenOffset = .zero
+        self.view.setNeedsLayout()
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    func showRepositionResetButton()
+    {
+        self.repositionResetButtonTimer?.invalidate()
+
+        self.repositionResetButton.isHidden = false
+        UIView.animate(withDuration: 0.2) {
+            self.repositionResetButton.alpha = 1.0
+        }
+    }
+
+    func hideRepositionResetButton(afterDelay delay: TimeInterval = 0)
+    {
+        self.repositionResetButtonTimer?.invalidate()
+        
+        self.repositionResetButtonTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            
+            UIView.animate(withDuration: 0.2) {
+                self.repositionResetButton.alpha = 0.0
+            } completion: { finished in
+                if finished
+                {
+                    self.repositionResetButton.isHidden = true
+                }
+            }
+        }
+    }
+
     func show(_ toastView: RSTToastView, in superview: UIView? = nil, duration: TimeInterval = 3.0)
     {
         let superview = superview ?? self.view!
@@ -2532,4 +2741,26 @@ private extension UserDefaults
     @NSManaged var desmumeDeprecatedAlertCount: Int
     
     @NSManaged var jitEnabledAlertCount: Int
+
+    // Offset of the game screen (from center) along its movable axis when a controller is connected.
+    @NSManaged var gameScreenOffsetPortrait: CGFloat
+    @NSManaged var gameScreenOffsetLandscape: CGFloat
+
+    func gameScreenOffset(for traits: DeltaCore.ControllerSkin.Traits) -> CGFloat
+    {
+        switch traits.orientation
+        {
+        case .portrait: return self.gameScreenOffsetPortrait
+        case .landscape: return self.gameScreenOffsetLandscape
+        }
+    }
+
+    func setGameScreenOffset(_ offset: CGFloat, for traits: DeltaCore.ControllerSkin.Traits)
+    {
+        switch traits.orientation
+        {
+        case .portrait: self.gameScreenOffsetPortrait = offset
+        case .landscape: self.gameScreenOffsetLandscape = offset
+        }
+    }
 }
