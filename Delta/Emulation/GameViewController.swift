@@ -1364,6 +1364,8 @@ private extension GameViewController
     func updateAudio()
     {
         self.emulatorCore?.audioManager.respectsSilentMode = Settings.respectSilentMode
+        self.emulatorCore?.audioManager.mixesWithOtherAudio = Settings.mixWithOtherAudio
+        self.emulatorCore?.audioManager.pausesOtherAudio = Settings.pauseOtherAudio
     }
 }
 
@@ -2343,7 +2345,7 @@ private extension GameViewController
         case .translucentControllerSkinOpacity:
             self.controllerView.translucentControllerSkinOpacity = Settings.translucentControllerSkinOpacity
             
-        case .respectSilentMode:
+        case .respectSilentMode, .mixWithOtherAudio, .pauseOtherAudio:
             self.updateAudio()
                 
         case .syncingService, .isAltJITEnabled: break

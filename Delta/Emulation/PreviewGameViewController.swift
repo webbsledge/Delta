@@ -95,6 +95,8 @@ extension PreviewGameViewController
         self.emulatorCore?.remove(self.gameView)
         
         self.emulatorCore?.audioManager.respectsSilentMode = Settings.respectSilentMode
+        self.emulatorCore?.audioManager.mixesWithOtherAudio = Settings.mixWithOtherAudio
+        self.emulatorCore?.audioManager.pausesOtherAudio = Settings.pauseOtherAudio
     }
     
     override func viewWillAppear(_ animated: Bool)

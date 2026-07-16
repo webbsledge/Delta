@@ -31,6 +31,8 @@ extension Settings.Name
     static let isThumbstickHapticFeedbackEnabled: Settings.Name = "isThumbstickHapticFeedbackEnabled"
     static let isAltJITEnabled: Settings.Name = "isAltJITEnabled"
     static let respectSilentMode: Settings.Name = "respectSilentMode"
+    static let mixWithOtherAudio: Settings.Name = "mixWithOtherAudio"
+    static let pauseOtherAudio: Settings.Name = "pauseOtherAudio"
     static let pauseWhileInactive: Settings.Name = "pauseWhileInactive"
     static let supportsExternalDisplays: Settings.Name = "supportsExternalDisplays"
     static let isQuickGesturesEnabled: Settings.Name = "isQuickGesturesEnabled"
@@ -70,6 +72,8 @@ struct Settings
                         #keyPath(UserDefaults.isPreviewsEnabled): true,
                         #keyPath(UserDefaults.isAltJITEnabled): false,
                         #keyPath(UserDefaults.respectSilentMode): false,
+                        #keyPath(UserDefaults.mixWithOtherAudio): false,
+                        #keyPath(UserDefaults.pauseOtherAudio): false,
                         #keyPath(UserDefaults.pauseWhileInactive): true,
                         #keyPath(UserDefaults.supportsExternalDisplays): true,
                         #keyPath(UserDefaults.isQuickGesturesEnabled): true,
@@ -251,6 +255,26 @@ extension Settings
         }
     }
     
+    static var mixWithOtherAudio: Bool {
+        get {
+            return UserDefaults.standard.mixWithOtherAudio
+        }
+        set {
+            UserDefaults.standard.mixWithOtherAudio = newValue
+            NotificationCenter.default.post(name: Settings.didChangeNotification, object: nil, userInfo: [NotificationUserInfoKey.name: Name.mixWithOtherAudio])
+        }
+    }
+
+    static var pauseOtherAudio: Bool {
+        get {
+            return UserDefaults.standard.pauseOtherAudio
+        }
+        set {
+            UserDefaults.standard.pauseOtherAudio = newValue
+            NotificationCenter.default.post(name: Settings.didChangeNotification, object: nil, userInfo: [NotificationUserInfoKey.name: Name.pauseOtherAudio])
+        }
+    }
+
     static var pauseWhileInactive: Bool {
         get {
             let pauseWhileInactive = UserDefaults.standard.pauseWhileInactive
@@ -623,6 +647,8 @@ private extension UserDefaults
     @NSManaged var isAltJITEnabled: Bool
     
     @NSManaged var respectSilentMode: Bool
+    @NSManaged var mixWithOtherAudio: Bool
+    @NSManaged var pauseOtherAudio: Bool
     
     @NSManaged var pauseWhileInactive: Bool
     @NSManaged var supportsExternalDisplays: Bool
