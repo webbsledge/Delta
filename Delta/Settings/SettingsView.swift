@@ -147,6 +147,9 @@ private struct ServicesSection: View
     @SwiftUI.State
     private var isAccountConnected: Bool = SyncManager.shared.coordinator?.account != nil
 
+    @SwiftUI.State
+    private var retroAchievementsUsername: String? = Keychain.shared.retroAchievementsUsername
+
     var body: some View {
         Section {
             NavigationLink {
@@ -178,8 +181,16 @@ private struct ServicesSection: View
                     }
                 }
             }
-        } footer: {
-            Text("Sync your games, save data, save states, and cheats between devices.")
+
+            NavigationLink {
+                AchievementAccount()
+            } label: {
+                SettingsRow(label: Text("RetroAchievements"), systemImage: "medal", color: .indigo) {
+                    if let username = retroAchievementsUsername {
+                        Text(username).foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: Settings.didChangeNotification)) { notification in
             guard let name = notification.userInfo?[Settings.NotificationUserInfoKey.name] as? Settings.Name,
@@ -191,6 +202,9 @@ private struct ServicesSection: View
         }
         .onReceive(NotificationCenter.default.publisher(for: SyncCoordinator.didFinishSyncingNotification).receive(on: DispatchQueue.main)) { _ in
             refreshSyncConflicts()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AchievementsManager.didFinishAuthenticatingNotification).receive(on: DispatchQueue.main)) { _ in
+            retroAchievementsUsername = Keychain.shared.retroAchievementsUsername
         }
         .onAppear {
             refreshSyncConflicts()

@@ -1598,7 +1598,7 @@ Menu + Long-Press: Quick Load</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
-                            <tableViewSection id="m5I-He-R1D">
+                            <tableViewSection footerTitle="Sync your games, save data, save states, and cheats between devices." id="m5I-He-R1D">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SwitchCell" id="fIu-zg-60Y" customClass="SwitchTableViewCell">
                                         <rect key="frame" x="16" y="18" width="343" height="51"/>

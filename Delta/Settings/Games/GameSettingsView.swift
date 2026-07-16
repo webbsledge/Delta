@@ -95,7 +95,7 @@ struct GameSettingsView: View
                 }
             }
             
-            if ExperimentalFeatures.shared.retroAchievements.isEnabled
+            if AchievementsManager.shared.isAuthenticated
             {
                 Section {
                     let binding = Binding {

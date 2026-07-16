@@ -73,11 +73,6 @@ struct ExperimentalFeatures: FeatureContainer
              description: "Save game screenshots to dedicated “Delta Screenshots” album.")
     var screenshotsAlbum
     
-    @Feature(name: "RetroAchievements",
-             description: "Log in with RetroAchievements to track your progress and achievements in games.",
-             options: RetroAchievementsOptions())
-    var retroAchievements
-
     @Feature(name: "Epilogue Operator",
              description: "Enable support for Epilogue Operator devices to play games directly from cartridges. Requires an app restart to take effect.")
     var operatorDevice

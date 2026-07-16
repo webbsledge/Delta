@@ -52,7 +52,7 @@ final class AchievementsTracker
             AchievementsManager.handleEvent(event: event, client: client)
         }
         
-        if ExperimentalFeatures.shared.retroAchievements.isHardcoreModeEnabled
+        if Settings.features.retroAchievements.isHardcoreModeEnabled
         {
             rc_client_set_hardcore_enabled(self.client, 1)
         }

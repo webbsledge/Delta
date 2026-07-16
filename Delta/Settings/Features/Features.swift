@@ -23,6 +23,9 @@ extension Settings
         
         @Feature(enabledWith: CustomFastForwardOptions())
         var customFastForward
+
+        @Feature(enabledWith: RetroAchievementsOptions())
+        var retroAchievements
         
         private init()
         {

@@ -206,7 +206,6 @@
 		D5011C48281B6E8B00A0760B /* CharacterSet+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5011C47281B6E8B00A0760B /* CharacterSet+Filename.swift */; };
 		D503AC3A2F6A15EA00002717 /* MenuItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D503AC392F6A15EA00002717 /* MenuItemButton.swift */; };
 		D5087E872D76563400E77936 /* AchievementsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5087E862D76563400E77936 /* AchievementsManager.swift */; };
-		D5087E8F2D766CFC00E77936 /* RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5087E8E2D766CFA00E77936 /* RetroAchievements.swift */; };
 		D50996E92D7A536600BE069B /* AchievementsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50996E82D7A536200BE069B /* AchievementsError.swift */; };
 		D50CA1572D419E7100F54920 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50CA1562D419E7100F54920 /* GameSettingsView.swift */; };
 		D510BC752A5CA9F500450CC0 /* Delta6ToDelta7.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = D510BC742A5CA9F500450CC0 /* Delta6ToDelta7.xcmappingmodel */; };
@@ -357,6 +356,8 @@
 		E647EE152F633116000DA257 /* AchievementToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = E647EE142F633115000DA257 /* AchievementToast.swift */; };
 		E65B0F932F6C65E4009B7F0A /* CheatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65B0F922F6C65E4009B7F0A /* CheatsView.swift */; };
 		E6955FAB2F743735001B8A75 /* CheatsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6955FAA2F743735001B8A75 /* CheatsButton.swift */; };
+		E6A42DFB3006916800483EAB /* RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A42DFA3006916800483EAB /* RetroAchievements.swift */; };
+		E6A7705F2FF2C253008FB301 /* AchievementAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A7705E2FF2C253008FB301 /* AchievementAccount.swift */; };
 		E6BD34AB2F563F1A001C9D78 /* AchievementGreeting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BD34AA2F563F1A001C9D78 /* AchievementGreeting.swift */; };
 		E6BD34AD2F587BF0001C9D78 /* AchievementGameBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BD34AC2F587BF0001C9D78 /* AchievementGameBanner.swift */; };
 		E6EB10AF2F58B1C50001AAD2 /* AchievementNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6EB10AE2F58B1C50001AAD2 /* AchievementNotification.swift */; };
@@ -792,7 +793,6 @@
 		D5011C47281B6E8B00A0760B /* CharacterSet+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacterSet+Filename.swift"; sourceTree = "<group>"; };
 		D503AC392F6A15EA00002717 /* MenuItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItemButton.swift; sourceTree = "<group>"; };
 		D5087E862D76563400E77936 /* AchievementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsManager.swift; sourceTree = "<group>"; };
-		D5087E8E2D766CFA00E77936 /* RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroAchievements.swift; sourceTree = "<group>"; };
 		D50996E82D7A536200BE069B /* AchievementsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsError.swift; sourceTree = "<group>"; };
 		D50CA1562D419E7100F54920 /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
 		D510BC742A5CA9F500450CC0 /* Delta6ToDelta7.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = Delta6ToDelta7.xcmappingmodel; sourceTree = "<group>"; };
@@ -936,6 +936,8 @@
 		E647EE142F633115000DA257 /* AchievementToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementToast.swift; sourceTree = "<group>"; };
 		E65B0F922F6C65E4009B7F0A /* CheatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatsView.swift; sourceTree = "<group>"; };
 		E6955FAA2F743735001B8A75 /* CheatsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatsButton.swift; sourceTree = "<group>"; };
+		E6A42DFA3006916800483EAB /* RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroAchievements.swift; sourceTree = "<group>"; };
+		E6A7705E2FF2C253008FB301 /* AchievementAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementAccount.swift; sourceTree = "<group>"; };
 		E6BD34AA2F563F1A001C9D78 /* AchievementGreeting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementGreeting.swift; sourceTree = "<group>"; };
 		E6BD34AC2F587BF0001C9D78 /* AchievementGameBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementGameBanner.swift; sourceTree = "<group>"; };
 		E6EB10AE2F58B1C50001AAD2 /* AchievementNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementNotification.swift; sourceTree = "<group>"; };
@@ -1678,6 +1680,7 @@
 				E6BD34AC2F587BF0001C9D78 /* AchievementGameBanner.swift */,
 				E6EB10AE2F58B1C50001AAD2 /* AchievementNotification.swift */,
 				E647EE142F633115000DA257 /* AchievementToast.swift */,
+				E6A7705E2FF2C253008FB301 /* AchievementAccount.swift */,
 			);
 			path = RetroAchievements;
 			sourceTree = "<group>";
@@ -1851,7 +1854,6 @@
 				D5147EC72A817B4A00D6CD64 /* ReviewSaveStatesOptions.swift */,
 				D5A287242C23A1AC009883C3 /* SkinDebugging.swift */,
 				C6F24AD62D64B452002F939F /* Lu.swift */,
-				D5087E8E2D766CFA00E77936 /* RetroAchievements.swift */,
 				E460BA622FECFFE700E8192B /* LibraryExport.swift */,
 			);
 			path = Features;
@@ -1918,6 +1920,7 @@
 			isa = PBXGroup;
 			children = (
 				D5ADD12129F33FBF00CE0560 /* Features.swift */,
+				E6A42DFA3006916800483EAB /* RetroAchievements.swift */,
 				D5D78AE429F9BC3700E064F0 /* DSAirPlay.swift */,
 				D5A9C01C29DE058C00A8D610 /* CustomFastForward.swift */,
 			);
@@ -2506,6 +2509,7 @@
 				D56C362F2D6538C500A8984D /* WhatsNewViewController.swift in Sources */,
 				BFA0D1271D3AE1F600565894 /* GameViewController.swift in Sources */,
 				D5AE76BA2C2B52820086471B /* PatreonAPI+Responses.swift in Sources */,
+				E6A7705F2FF2C253008FB301 /* AchievementAccount.swift in Sources */,
 				BF59428A1E09BC8B0051894B /* _SaveState.swift in Sources */,
 				BFC1F2CC22F9515F00606A45 /* CopyDeepLinkActivity.swift in Sources */,
 				BF5942801E09BC830051894B /* SaveState.swift in Sources */,
@@ -2519,7 +2523,6 @@
 				C6F24AD92D64B550002F939F /* PauseViewController+Lu.swift in Sources */,
 				BFE593CA21F3F8B7003412A6 /* GameSave.swift in Sources */,
 				E6EB10AF2F58B1C50001AAD2 /* AchievementNotification.swift in Sources */,
-				D5087E8F2D766CFC00E77936 /* RetroAchievements.swift in Sources */,
 				BF63A1B521A4B76E00EE8F61 /* RecordVersionsViewController.swift in Sources */,
 				BF6424831F5B8F3F00D6AB44 /* ListMenuViewController.swift in Sources */,
 				BF1020E31F95B05B00313182 /* DeltaToDelta2.xcmappingmodel in Sources */,
@@ -2527,6 +2530,7 @@
 				BFEE943D23F2180200CDA07D /* Delta4ToDelta5.xcmappingmodel in Sources */,
 				BF31878B1D489AAA00BD020D /* CheatValidator.swift in Sources */,
 				D5EB601B2C0E6190007C543C /* Stream+Conveniences.swift in Sources */,
+				E6A42DFB3006916800483EAB /* RetroAchievements.swift in Sources */,
 				D560BD8629EDC45600289847 /* ExternalDisplaySceneDelegate.swift in Sources */,
 				BFFC46201D59823500AF2CC6 /* InitialGamesStoryboardSegue.swift in Sources */,
 				D5AA0F102CE3F3CC0015D134 /* PatreonComponents.swift in Sources */,

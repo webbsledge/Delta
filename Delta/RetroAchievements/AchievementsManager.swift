@@ -112,6 +112,10 @@ final class AchievementsManager
 
 extension AchievementsManager
 {
+    var isAuthenticated: Bool {
+        return Keychain.shared.retroAchievementsAuthToken != nil
+    }
+
     @discardableResult
     func authenticate(username: String, password: String) async throws -> Account
     {
@@ -130,14 +134,14 @@ extension AchievementsManager
         }
         
         userData.deallocate()
-        
+
         let account = self.account!
         return account
     }
     
     func authenticateInBackground()
     {
-        guard let username = Keychain.shared.retroAchievementsUsername, let token = Keychain.shared.retroAchievementsAuthToken, ExperimentalFeatures.shared.retroAchievements.isEnabled else { return }
+        guard let username = Keychain.shared.retroAchievementsUsername, let token = Keychain.shared.retroAchievementsAuthToken else { return }
         
         username.withCString { rawUsername in
             token.withCString { rawToken in

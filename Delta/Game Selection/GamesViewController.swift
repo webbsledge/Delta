@@ -768,6 +768,9 @@ private extension GamesViewController
                     toastView.show(in: self.navigationController?.view ?? self.view, duration: duration)
                 }
             case .failure(let error):
+                // If another screen (e.g. Settings) is presented above us, it's responsible for showing its own error UI, so don't show a redundant toast.
+                guard self.presentedViewController == nil else { return }
+
                 toastView = RSTToastView(text: NSLocalizedString("Unable to Log In to RetroAchievements", comment: ""), detailText: error.localizedDescription)
                 duration = 4.0
                 
