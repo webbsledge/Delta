@@ -138,6 +138,9 @@ class SaveStatesViewController: UICollectionViewController
     private var emulatorCoreSaveState: SaveStateProtocol?
     
     @IBOutlet private var optionsButton: UIBarButtonItem!
+
+    private var selectionCountItem: UIBarButtonItem?
+    private var deleteSelectionItem: UIBarButtonItem?
     
     required init?(coder aDecoder: NSCoder)
     {
@@ -179,7 +182,13 @@ extension SaveStatesViewController
         {
             self.optionsButton.image = UIImage(systemName: "ellipsis")
         }
-        
+
+        self.collectionView.allowsMultipleSelectionDuringEditing = true
+
+        var rightBarButtonItems = self.navigationItem.rightBarButtonItems ?? []
+        rightBarButtonItems.insert(self.editButtonItem, at: 0)
+        self.navigationItem.rightBarButtonItems = rightBarButtonItems
+
         self.prototypeCellWidthConstraint = self.prototypeCell.contentView.widthAnchor.constraint(equalToConstant: 0)
         self.prototypeCellWidthConstraint.isActive = true
         
@@ -227,6 +236,8 @@ extension SaveStatesViewController
     {
         super.viewWillDisappear(animated)
         
+        if self.isEditing { self.setEditing(false, animated: false) }
+
         self.resetEmulatorCoreIfNeeded()
     }
     
@@ -425,6 +436,103 @@ private extension SaveStatesViewController
         
         let optionsMenu = UIMenu(children: allMenus)
         self.optionsButton.menu = optionsMenu
+    }
+    
+    internal override func setEditing(_ editing: Bool, animated: Bool)
+    {
+        super.setEditing(editing, animated: animated)
+
+        if editing
+        {
+            // Use a title-based UIBarButtonItem so iOS 26's toolbar capsule sizes to fit the text.
+            let countItem = UIBarButtonItem(title: NSLocalizedString("0 Selected", comment: ""), style: .plain, target: nil, action: nil)
+            self.selectionCountItem = countItem
+
+            let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+            let deleteButton = UIBarButtonItem(title: NSLocalizedString("Delete", comment: ""),
+                                               style: .plain, target: self,
+                                               action: #selector(deleteSelectedSaveStates))
+            deleteButton.tintColor = UIColor.systemRed
+            deleteButton.isEnabled = false
+            self.deleteSelectionItem = deleteButton
+
+            self.toolbarItems = [countItem, flexSpace, deleteButton]
+            self.navigationController?.setToolbarHidden(false, animated: animated)
+        }
+        else
+        {
+            self.collectionView.indexPathsForSelectedItems?.forEach {
+                self.collectionView.deselectItem(at: $0, animated: false)
+            }
+
+            self.navigationController?.setToolbarHidden(true, animated: animated)
+            self.toolbarItems = nil
+            self.selectionCountItem = nil
+            self.deleteSelectionItem = nil
+        }
+
+        // Update only the visible cells' selection appearance in place.
+        // A full reloadData() here would race with the FRC-driven performBatchUpdates
+        // that animates deletions, causing an "invalid number of items" crash.
+        for indexPath in self.collectionView.indexPathsForVisibleItems
+        {
+            guard let cell = self.collectionView.cellForItem(at: indexPath) as? GridCollectionViewCell else { continue }
+
+            if editing
+            {
+                let section = self.correctedSectionForSectionIndex(indexPath.section)
+                cell.isInSelectionMode = section != .auto && section != .info && section != .locked
+            }
+            else
+            {
+                cell.isInSelectionMode = false
+            }
+        }
+    }
+
+    @objc private func deleteSelectedSaveStates()
+    {
+        let indexPaths = self.collectionView.indexPathsForSelectedItems ?? []
+        guard !indexPaths.isEmpty else { return }
+
+        let objectIDs = indexPaths.map { self.dataSource.item(at: $0).objectID }
+        let count = objectIDs.count
+
+        let title = count == 1
+            ? NSLocalizedString("Delete Save State?", comment: "")
+            : String(format: NSLocalizedString("Delete %d Save States?", comment: ""), count)
+        let message = count == 1
+            ? NSLocalizedString("Are you sure you want to delete this save state? This cannot be undone.", comment: "")
+            : String(format: NSLocalizedString("Are you sure you want to delete %d save states? This cannot be undone.", comment: ""), count)
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: ""), style: .destructive) { [weak self] _ in
+            guard let self else { return }
+
+            DatabaseManager.shared.performBackgroundTask { context in
+                for objectID in objectIDs {
+                    let object = context.object(with: objectID)
+                    context.delete(object)
+                }
+                context.saveWithErrorLogging()
+            }
+
+            self.setEditing(false, animated: true)
+        })
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel))
+
+        self.present(alert, animated: true)
+    }
+
+    private func updateToolbarState()
+    {
+        let count = self.collectionView.indexPathsForSelectedItems?.count ?? 0
+        self.selectionCountItem?.title = count == 1
+            ? NSLocalizedString("1 Selected", comment: "")
+            : String(format: NSLocalizedString("%d Selected", comment: ""), count)
+
+        self.deleteSelectionItem?.isEnabled = count > 0
     }
 }
 
@@ -643,6 +751,9 @@ private extension SaveStatesViewController
         let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).withSymbolicTraits(.traitBold)!
         cell.textLabel.font = UIFont(descriptor: fontDescriptor, size: 0.0)
         cell.textLabel.text = saveState.localizedName
+
+        let section = self.correctedSectionForSectionIndex(indexPath.section)
+        cell.isInSelectionMode = self.isEditing && section != .auto && section != .info && section != .locked
     }
     
     func configure(_ headerView: SaveStatesCollectionHeaderView, forSection section: Int)
@@ -1186,8 +1297,22 @@ extension SaveStatesViewController
 //MARK: - <UICollectionViewDelegate> -
 extension SaveStatesViewController
 {
+    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool
+    {
+        guard self.isEditing else { return true }
+
+        let section = self.correctedSectionForSectionIndex(indexPath.section)
+        return section != .auto && section != .info && section != .locked
+    }
+
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
+        if self.isEditing
+        {
+            self.updateToolbarState()
+            return
+        }
+
         let saveState = self.dataSource.item(at: indexPath)
         
         switch self.filter
@@ -1225,6 +1350,12 @@ extension SaveStatesViewController
             }
         }
     }
+
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath)
+    {
+        guard self.isEditing else { return }
+        self.updateToolbarState()
+    }
 }
 
 //MARK: - <UICollectionViewDelegateFlowLayout> -
@@ -1252,6 +1383,8 @@ extension SaveStatesViewController
 {
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?
     {
+        guard !self.isEditing else { return nil }
+
         let saveState = self.dataSource.item(at: indexPath)
         guard let actions = self.actionsForSaveState(saveState) else { return nil }
         

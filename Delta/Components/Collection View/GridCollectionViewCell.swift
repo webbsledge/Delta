@@ -19,6 +19,18 @@ class GridCollectionViewCell: UICollectionViewCell
         set { self.glassView.isHidden = !newValue }
     }
     
+    var isInSelectionMode: Bool = false {
+        didSet {
+            self.updateSelectionIndicator()
+        }
+    }
+
+    override var isSelected: Bool {
+        didSet {
+            self.updateSelectionIndicator()
+        }
+    }
+    
     var isImageViewVibrancyEnabled = true {
         didSet {
             if self.isImageViewVibrancyEnabled
@@ -29,6 +41,8 @@ class GridCollectionViewCell: UICollectionViewCell
             {
                 self.contentView.addSubview(self.imageView)
             }
+
+            self.contentView.bringSubviewToFront(self.selectionIndicatorView)
         }
     }
     
@@ -42,6 +56,8 @@ class GridCollectionViewCell: UICollectionViewCell
             {
                 self.contentView.addSubview(self.textLabel)
             }
+
+            self.contentView.bringSubviewToFront(self.selectionIndicatorView)
         }
     }
     
@@ -52,6 +68,7 @@ class GridCollectionViewCell: UICollectionViewCell
     }
     
     private var glassView = UIVisualEffectView(effect: nil)
+    private let selectionIndicatorView = UIImageView()
     private let vibrancyView = UIVisualEffectView(effect: UIVibrancyEffect(blurEffect: UIBlurEffect(style: .dark)))
     private let labelVibrancyView = UIVisualEffectView(effect: UIVibrancyEffect(blurEffect: UIBlurEffect(style: .dark)))
     
@@ -90,6 +107,16 @@ class GridCollectionViewCell: UICollectionViewCell
         self.glassView.contentView.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.glassView)
         
+        // Selection Indicator (for multi-select mode)
+        self.selectionIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        self.selectionIndicatorView.image = UIImage(systemName: "circle")
+        self.selectionIndicatorView.tintColor = .white
+        self.selectionIndicatorView.isHidden = true
+        self.selectionIndicatorView.contentMode = .scaleAspectFit
+
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+        self.selectionIndicatorView.preferredSymbolConfiguration = config
+
         self.vibrancyView.translatesAutoresizingMaskIntoConstraints = false
         self.vibrancyView.contentView.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.vibrancyView)
@@ -108,6 +135,9 @@ class GridCollectionViewCell: UICollectionViewCell
         self.textLabel.textAlignment = .center
         self.textLabel.numberOfLines = 0
         self.contentView.addSubview(self.textLabel)
+
+        // Add selection indicator last so it renders above the vibrancy layers and imageView.
+        self.contentView.addSubview(self.selectionIndicatorView)
         
         if #available(iOS 26, *)
         {
@@ -150,6 +180,12 @@ class GridCollectionViewCell: UICollectionViewCell
         self.labelVibrancyView.contentView.leadingAnchor.constraint(equalTo: self.labelVibrancyView.leadingAnchor).isActive = true
         self.labelVibrancyView.contentView.trailingAnchor.constraint(equalTo: self.labelVibrancyView.trailingAnchor).isActive = true
         
+        // Selection Indicator
+        self.selectionIndicatorView.topAnchor.constraint(equalTo: self.imageView.topAnchor, constant: 4).isActive = true
+        self.selectionIndicatorView.trailingAnchor.constraint(equalTo: self.imageView.trailingAnchor, constant: -4).isActive = true
+        self.selectionIndicatorView.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        self.selectionIndicatorView.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        
         // Image View
         self.imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -190,6 +226,12 @@ class GridCollectionViewCell: UICollectionViewCell
         self.updateMaximumImageSize()
     }
     
+    override func prepareForReuse()
+    {
+        super.prepareForReuse()
+        self.isInSelectionMode = false
+    }
+
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator)
     {
         super.didUpdateFocus(in: context, with: coordinator)
@@ -228,8 +270,29 @@ private extension GridCollectionViewCell
     {
         self.imageViewWidthConstraint.constant = self.maximumImageSize.width
         self.imageViewHeightConstraint.constant = self.maximumImageSize.height
-        
+
         self.textLabelVerticalSpacingConstraint.constant = 8
         self.textLabelFocusedVerticalSpacingConstraint?.constant = self.maximumImageSize.height / 10.0
+    }
+
+    func updateSelectionIndicator()
+    {
+        guard self.isInSelectionMode else {
+            self.selectionIndicatorView.isHidden = true
+            return
+        }
+
+        if self.isSelected
+        {
+            self.selectionIndicatorView.image = UIImage(systemName: "checkmark.circle.fill")
+            self.selectionIndicatorView.tintColor = .deltaPurple
+        }
+        else
+        {
+            self.selectionIndicatorView.image = UIImage(systemName: "circle")
+            self.selectionIndicatorView.tintColor = .white
+        }
+
+        self.selectionIndicatorView.isHidden = false
     }
 }
