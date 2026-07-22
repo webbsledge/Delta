@@ -37,6 +37,7 @@ struct SettingsView: View
                 PatreonSection()
                 ControlsSection()
                 EmulationSection()
+                OnlineMultiplayerSection()
                 DisplaySection()
                 ServicesSection()
                 MiscellaneousSection()
@@ -131,6 +132,91 @@ private struct EmulationSection: View
                 SettingsRow(label: Text("Cores"), systemImage: "cpu", color: .cyan)
             }
         }
+    }
+}
+
+// MARK: - Online Multiplayer
+
+private struct OnlineMultiplayerSection: View
+{
+    var body: some View {
+        Section {
+            NavigationLink {
+                OnlineMultiplayerView()
+            } label: {
+                SettingsRow(label: Text("Online Multiplayer"), systemImage: "globe", color: .orange)
+            }
+        }
+    }
+}
+
+// MARK: - Online Multiplayer Detail
+
+struct OnlineMultiplayerView: View
+{
+    @SwiftUI.State
+    private var preferredWFCServer: String? = Settings.preferredWFCServer
+
+    @SwiftUI.State
+    private var isConfirmingReset: Bool = false
+
+    var body: some View {
+        Form {
+            Section {
+                NavigationLink {
+                    WFCServersView()
+                } label: {
+                    LabeledContent {
+                        if let serverName = preferredServerName
+                        {
+                            Text(serverName)
+                        }
+                    } label: {
+                        Text("WFC Server")
+                    }
+                }
+
+                if preferredWFCServer != nil
+                {
+                    Button("Reset Online Settings", role: .destructive) {
+                        isConfirmingReset = true
+                    }
+                    .confirmationDialog("Are you sure you want to reset your online settings?", isPresented: $isConfirmingReset, titleVisibility: .visible) {
+                        Button("Reset Online Settings", role: .destructive) {
+                            WFCManager.shared.resetWFCConfiguration()
+                        }
+                    } message: {
+                        Text("You may need to re-add any friend codes you’ve previously registered.")
+                    }
+                }
+            } header: {
+                Text("Nintendo DS")
+            } footer: {
+                Text("Choose the 3rd-party Nintendo WFC server Delta should use for online play in Nintendo DS games.")
+            }
+        }
+        .navigationTitle("Online Multiplayer")
+        .navigationBarTitleDisplayMode(.inline)
+        .onReceive(NotificationCenter.default.publisher(for: Settings.didChangeNotification)) { notification in
+            guard let name = notification.userInfo?[Settings.NotificationUserInfoKey.name] as? Settings.Name,
+                  name == .preferredWFCServer else { return }
+
+            preferredWFCServer = Settings.preferredWFCServer
+        }
+        .onAppear {
+            preferredWFCServer = Settings.preferredWFCServer
+        }
+    }
+
+    private var preferredServerName: String? {
+        guard let preferredWFCServer else { return nil }
+
+        if let servers = UserDefaults.standard.wfcServers, let knownServer = servers.first(where: { $0.dns == preferredWFCServer })
+        {
+            return knownServer.name
+        }
+
+        return preferredWFCServer
     }
 }
 

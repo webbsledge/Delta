@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftUI
 import SafariServices
 import MobileCoreServices
 import CryptoKit
@@ -23,15 +22,8 @@ private extension MelonDSCoreSettingsViewController
     {
         case general
         case performance
-        case online
         case dsBIOS
         case dsiBIOS
-    }
-    
-    enum OnlineRow: Int
-    {
-        case server
-        case reset
     }
     
     @available(iOS 13, *)
@@ -185,12 +177,6 @@ private extension MelonDSCoreSettingsViewController
             // AltJIT not currently supported with melonDS 0.9.5.
             return true
             
-        case .online:
-            if #unavailable(iOS 15)
-            {
-                return true
-            }
-            
         case .dsiBIOS where !isBeta:
             // Using public Delta version, which doesn't support DSi (yet).
             return true
@@ -276,10 +262,6 @@ extension MelonDSCoreSettingsViewController
             let validKeys = DeltaCoreMetadata.Key.allCases.filter { core.metadata?[$0] != nil }
             return validKeys.count
             
-        case .online where Settings.preferredWFCServer == nil:
-            // We haven't chosen a WFC server yet, so hide "Reset WFC Configuration" setting.
-            return 1
-            
         default: break
         }
         
@@ -319,32 +301,6 @@ extension MelonDSCoreSettingsViewController
         case .performance:
             let cell = cell as! SwitchTableViewCell
             cell.switchView.isOn = Settings.isAltJITEnabled
-            
-        case .online:
-            guard #available(iOS 15, *) else { break }
-            
-            if let preferredServer = Settings.preferredWFCServer
-            {
-                if let servers = UserDefaults.standard.wfcServers, let knownServer = servers.first(where: { $0.dns == preferredServer })
-                {
-                    // Server matches known server, so display its name instead.
-                    cell.detailTextLabel?.text = knownServer.name
-                }
-                else
-                {
-                    cell.detailTextLabel?.text = preferredServer
-                }
-                
-                cell.detailTextLabel?.textColor = .gray
-            }
-            else
-            {
-                cell.accessoryType = .disclosureIndicator
-                cell.detailTextLabel?.text = NSLocalizedString("Choose", comment: "")
-                cell.detailTextLabel?.textColor = .deltaPurple
-            }
-            
-            cell.selectionStyle = .default
             
         case .dsBIOS:
             let bios = DSBIOS.allCases[indexPath.row]
@@ -397,29 +353,6 @@ extension MelonDSCoreSettingsViewController
             let key = filteredKeys[indexPath.row]
             self.openMetadataURL(for: key)
             
-        case .online:
-            guard #available(iOS 15, *) else { break }
-            
-            switch OnlineRow(rawValue: indexPath.item)!
-            {
-            case .server:
-                let hostingController = WFCServersView.makeViewController()
-                self.navigationController?.pushViewController(hostingController, animated: true)
-                
-            case .reset:
-                let alertController = UIAlertController(title: String(localized: "Are you sure you want to reset your online settings?"), message: String(localized: "You may need to re-add any friend codes you’ve previously registered."), preferredStyle: .actionSheet)
-                alertController.addAction(.cancel)
-                alertController.addAction(UIAlertAction(title: String(localized: "Reset Online Settings"), style: .destructive) { [weak self] _ in
-                    WFCManager.shared.resetWFCConfiguration()
-                    self?.tableView.reloadData()
-                })
-                alertController.popoverPresentationController?.sourceView = self.tableView
-                alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-                self.present(alertController, animated: true)
-                
-                self.tableView.deselectRow(at: indexPath, animated: true)
-            }
-                        
         case .dsBIOS:
             let bios = DSBIOS.allCases[indexPath.row]
             self.locate(bios)
@@ -452,7 +385,6 @@ extension MelonDSCoreSettingsViewController
         switch section
         {
         case _ where isSectionHidden(section): return nil
-        case .online where Settings.preferredWFCServer != nil: return nil
         case .dsBIOS, .dsiBIOS:
             guard #available(iOS 15, *) else { break }
             return nil
