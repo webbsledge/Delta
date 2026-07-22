@@ -41,6 +41,7 @@ extension Settings.Name
     static let opensGamesInNewWindow: Settings.Name = "opensGamesInNewWindow"
     static let preferredGBColorPalette: Settings.Name = "preferredGBColorPalette"
     static let isPreviewsEnabled: Settings.Name = "isPreviewsEnabled"
+    static let pauseMenuToolbarPlacement: Settings.Name = "pauseMenuToolbarPlacement"
     static let dsAirPlayTopScreenOnly: Settings.Name = Settings.features.dsAirPlay.$topScreenOnly.settingsKey
 }
 
@@ -50,6 +51,12 @@ extension Settings
     {
         case recent
         case manual
+    }
+
+    enum PauseMenuToolbarPlacement: String
+    {
+        case top
+        case bottom
     }
     
     typealias Name = SettingsName
@@ -70,6 +77,7 @@ struct Settings
                         #keyPath(UserDefaults.isThumbstickHapticFeedbackEnabled): true,
                         #keyPath(UserDefaults.sortSaveStatesByOldestFirst): true,
                         #keyPath(UserDefaults.isPreviewsEnabled): true,
+                        #keyPath(UserDefaults.pauseMenuToolbarPlacement): PauseMenuToolbarPlacement.bottom.rawValue,
                         #keyPath(UserDefaults.isAltJITEnabled): false,
                         #keyPath(UserDefaults.respectSilentMode): false,
                         #keyPath(UserDefaults.mixWithOtherAudio): false,
@@ -233,6 +241,14 @@ extension Settings
         }
     }
     
+    static var pauseMenuToolbarPlacement: PauseMenuToolbarPlacement {
+        set { UserDefaults.standard.pauseMenuToolbarPlacement = newValue.rawValue }
+        get {
+            let placement = PauseMenuToolbarPlacement(rawValue: UserDefaults.standard.pauseMenuToolbarPlacement) ?? .bottom
+            return placement
+        }
+    }
+
     static var isAltJITEnabled: Bool {
         get {
             let isAltJITEnabled = UserDefaults.standard.isAltJITEnabled
@@ -643,6 +659,8 @@ private extension UserDefaults
     @NSManaged var sortSaveStatesByOldestFirst: Bool
     
     @NSManaged var isPreviewsEnabled: Bool
+
+    @NSManaged var pauseMenuToolbarPlacement: String
     
     @NSManaged var isAltJITEnabled: Bool
     

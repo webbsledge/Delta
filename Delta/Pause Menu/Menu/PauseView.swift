@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+import DeltaCore
+
 @available(iOS 26, *)
 extension PauseView
 {
@@ -74,8 +76,24 @@ struct PauseView: View
     @Environment(HostingController.self)
     private var hostingViewController
     
-    @State
+    @SwiftUI.State
     private var isHidden: Bool = true
+    
+    @AppStorage(Settings.Name.pauseMenuToolbarPlacement.rawValue)
+    private var toolbarPlacement: Settings.PauseMenuToolbarPlacement = .bottom
+
+    private var stopButton: some View {
+        Button(role: .close, action: stopHandler) {
+            if hostingViewController.isGameScene
+            {
+                Label("Quit Game", systemImage: "xmark")
+            }
+            else
+            {
+                Label("Main Menu", systemImage: "house.fill")
+            }
+        }
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -100,27 +118,39 @@ struct PauseView: View
         .navigationBarTitleDisplayMode(.large)
         .toolbarVisibility(isHidden ? .hidden : .visible, for: .bottomBar)
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                Button(role: .close, action: stopHandler) {
-                    if hostingViewController.isGameScene
-                    {
-                        Label("Quit Game", systemImage: "xmark")
+            if toolbarPlacement == .top
+            {
+                if !isHidden
+                {
+                    ToolbarItem(placement: .topBarLeading) {
+                        stopButton
+                            .glassEffect()
+                            .glassEffectTransition(.materialize)
                     }
-                    else
-                    {
-                        Label("Main Menu", systemImage: "house.fill")
+
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Resume", systemImage: "play.fill", role: .confirm, action: resumeHandler)
+                            .tint(Color(uiColor: .deltaPurple))
+                            .glassEffect()
+                            .glassEffectTransition(.materialize)
                     }
                 }
-                .glassEffect()
-                .glassEffectTransition(.materialize)
-                
-                Spacer()
-                
-                Button("Resume", systemImage: "play.fill", role: .confirm, action: resumeHandler)
-                    //.glassEffect(.regular.tint(Color(uiColor: .deltaPurple))) // Doesn't work as expected :(
-                    .glassEffect()
-                    .tint(Color(uiColor: .deltaPurple))
-                    .glassEffectTransition(.materialize)
+            }
+            else
+            {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    stopButton
+                        .glassEffect()
+                        .glassEffectTransition(.materialize)
+                    
+                    Spacer()
+                    
+                    Button("Resume", systemImage: "play.fill", role: .confirm, action: resumeHandler)
+                        //.glassEffect(.regular.tint(Color(uiColor: .deltaPurple))) // Doesn't work as expected :(
+                        .glassEffect()
+                        .tint(Color(uiColor: .deltaPurple))
+                        .glassEffectTransition(.materialize)
+                }
             }
         }
         .onAppear {
