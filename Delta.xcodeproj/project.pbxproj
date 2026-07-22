@@ -50,6 +50,8 @@
 		828242262F7C40C300D8F899 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828242252F7C40C300D8F899 /* SettingsView.swift */; };
 		828242302F7C487800D8F899 /* SettingsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8282422F2F7C487800D8F899 /* SettingsRow.swift */; };
 		82A787D92F60C4F400E4CA06 /* PageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A787D82F60C4F400E4CA06 /* PageControl.swift */; };
+		82ACA6662FF58E4100A974BF /* ControlsEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82ACA6642FF58E4100A974BF /* ControlsEditorView.swift */; };
+		82ACA6672FF58E4100A974BF /* PlayerControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82ACA6652FF58E4100A974BF /* PlayerControllerView.swift */; };
 		82B3FAA92E3D592D002F179E /* GBCCoreSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B3FAA02E3D5926002F179E /* GBCCoreSettingsView.swift */; };
 		82C63BDB2E57BB4700B0C812 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C63BDA2E57BB4700B0C812 /* UIColor+Hex.swift */; };
 		82C83A732E4FCC030020711E /* CoreSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C83A722E4FCC030020711E /* CoreSettingsView.swift */; };
@@ -614,6 +616,8 @@
 		828242252F7C40C300D8F899 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8282422F2F7C487800D8F899 /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		82A787D82F60C4F400E4CA06 /* PageControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageControl.swift; sourceTree = "<group>"; };
+		82ACA6642FF58E4100A974BF /* ControlsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsEditorView.swift; sourceTree = "<group>"; };
+		82ACA6652FF58E4100A974BF /* PlayerControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControllerView.swift; sourceTree = "<group>"; };
 		82B3FAA02E3D5926002F179E /* GBCCoreSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GBCCoreSettingsView.swift; sourceTree = "<group>"; };
 		82C63BDA2E57BB4700B0C812 /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		82C83A722E4FCC030020711E /* CoreSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreSettingsView.swift; sourceTree = "<group>"; };
@@ -1071,6 +1075,8 @@
 		BF11734E1DA32CEC00047DF8 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				82ACA6642FF58E4100A974BF /* ControlsEditorView.swift */,
+				82ACA6652FF58E4100A974BF /* PlayerControllerView.swift */,
 				BF11734F1DA32CF600047DF8 /* ControllersSettingsViewController.swift */,
 				CA0001062E60000100000006 /* ControllerSettingsView.swift */,
 				BF616A121F08184A0077F8B2 /* ControllerInputsViewController.swift */,
@@ -2630,6 +2636,8 @@
 				AC1C992729F9F1CF0020E6E4 /* GameViewController+ExperimentalToasts.swift in Sources */,
 				4C9DD6C0CC4DC2F8F032ED35 /* AppDelegate+Operator.swift in Sources */,
 				5FFDBC83E8777EB11777803A /* GamesViewController+Operator.swift in Sources */,
+				82ACA6662FF58E4100A974BF /* ControlsEditorView.swift in Sources */,
+				82ACA6672FF58E4100A974BF /* PlayerControllerView.swift in Sources */,
 				930F926748EAFE4DA261B958 /* GameCollectionViewController+Operator.swift in Sources */,
 				D5E12AEB2D01157F000C7531 /* String+Profanity.swift in Sources */,
 				E460BA632FECFFE700E8192B /* LibraryExport.swift in Sources */,

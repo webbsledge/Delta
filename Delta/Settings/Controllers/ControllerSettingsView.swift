@@ -11,41 +11,57 @@ import DeltaCore
 
 struct ControllerSettingsView: View
 {
+    private var connectedControllers: [GameController] { ExternalGameControllerManager.shared.connectedControllers }
+    
     @SwiftUI.State
-    private var gameControllerManager: ExternalGameControllerManager = .shared
-
-    @SwiftUI.State
-    private var localControllerPlayerIndex: Int? = Settings.localControllerPlayerIndex
-
+    private var controllerNames = [Int: String]() // Player index → assigned controller name
+    
     var body: some View {
         Form {
             ForEach(0..<4) { playerIndex in
-                NavigationLink(destination: ControllersSettingsViewController.ViewRepresentable(playerIndex: playerIndex).ignoresSafeArea()) {
-                    LabeledContent("Player \(playerIndex + 1)", value: controllerName(for: playerIndex) ?? "")
+                NavigationLink {
+                    PlayerControllerView(playerIndex: playerIndex)
+                        .environment(\.managedObjectContext, DatabaseManager.shared.viewContext)
+                } label: {
+                    LabeledContent("Player \(playerIndex + 1)", value: controllerNames[playerIndex] ?? "")
                 }
             }
         }
         .tint(.accentColor)
         .navigationTitle("Controllers")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear(perform: updateControllerNames)
+        .onChange(of: connectedControllers as NSArray) { updateControllerNames() } // Cast to NSArray which is equatable
         .onReceive(NotificationCenter.default.publisher(for: Settings.didChangeNotification)) { notification in
             guard let name = notification.userInfo?[Settings.NotificationUserInfoKey.name] as? Settings.Name,
                   name == .localControllerPlayerIndex else { return }
-            localControllerPlayerIndex = Settings.localControllerPlayerIndex
+            updateControllerNames()
         }
     }
-
-    private func controllerName(for playerIndex: Int) -> String?
+    
+    private func updateControllerNames()
     {
-        if localControllerPlayerIndex == playerIndex
+        // If no external controller is assigned to any player, touch will control gameplay.
+        // So if touch is unassigned, assign it to Player 1. (Mirrors GameViewController.updateControllers().)
+        if !connectedControllers.contains(where: { $0.playerIndex != nil }) && Settings.localControllerPlayerIndex == nil
         {
-            return LocalDeviceController().name
-        }
-        else if let controller = gameControllerManager.connectedControllers.first(where: { $0.playerIndex == playerIndex })
-        {
-            return controller.name
+            Settings.localControllerPlayerIndex = 0
         }
         
-        return nil
+        var names = [Int: String]()
+        
+        for playerIndex in 0..<4
+        {
+            if Settings.localControllerPlayerIndex == playerIndex
+            {
+                names[playerIndex] = LocalDeviceController().name
+            }
+            else if let controller = connectedControllers.first(where: { $0.playerIndex == playerIndex })
+            {
+                names[playerIndex] = controller.name
+            }
+        }
+        
+        controllerNames = names
     }
 }

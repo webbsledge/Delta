@@ -36,15 +36,15 @@ public class GameControllerInputMapping: _GameControllerInputMapping
 
 extension GameControllerInputMapping
 {
-    class func inputMapping(for gameController: GameController, gameType: GameType, in managedObjectContext: NSManagedObjectContext) -> GameControllerInputMapping?
+    class func inputMapping(forPlayer playerIndex: Int?, gameType: GameType, controllerType: GameControllerInputType, in managedObjectContext: NSManagedObjectContext) -> GameControllerInputMapping?
     {
-        guard let playerIndex = gameController.playerIndex else {
+        guard let playerIndex = playerIndex else {
             return nil
         }
                 
         let fetchRequest: NSFetchRequest<GameControllerInputMapping> = GameControllerInputMapping.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %@ AND %K == %d", #keyPath(GameControllerInputMapping.gameControllerInputType), gameController.inputType.rawValue, #keyPath(GameControllerInputMapping.gameType), gameType.rawValue, #keyPath(GameControllerInputMapping.playerIndex), playerIndex)
+        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %@ AND %K == %d", #keyPath(GameControllerInputMapping.gameControllerInputType), controllerType.rawValue, #keyPath(GameControllerInputMapping.gameType), gameType.rawValue, #keyPath(GameControllerInputMapping.playerIndex), playerIndex)
         
         do
         {

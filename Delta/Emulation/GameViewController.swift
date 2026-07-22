@@ -883,7 +883,7 @@ private extension GameViewController
                 {
                     let inputMapping: GameControllerInputMappingProtocol
                     
-                    if let mapping = GameControllerInputMapping.inputMapping(for: gameController, gameType: game.type, in: DatabaseManager.shared.viewContext)
+                    if let mapping = GameControllerInputMapping.inputMapping(forPlayer: gameController.playerIndex, gameType: game.type, controllerType: gameController.inputType, in: DatabaseManager.shared.viewContext)
                     {
                         inputMapping = mapping
                     }

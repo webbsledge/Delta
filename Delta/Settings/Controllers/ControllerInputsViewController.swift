@@ -187,7 +187,7 @@ private extension ControllerInputsViewController
         if let gameController = self.gameController, self.inputMappings[self.system] == nil
         {
             self.managedObjectContext.performAndWait {
-                let inputMapping = GameControllerInputMapping.inputMapping(for: gameController, gameType: self.system.gameType, in: self.managedObjectContext) ?? self.makeDefaultInputMapping()
+                let inputMapping = GameControllerInputMapping.inputMapping(forPlayer: gameController.playerIndex, gameType: self.system.gameType, controllerType: gameController.inputType, in: self.managedObjectContext) ?? self.makeDefaultInputMapping()
                 
                 inputMapping.name = String.localizedStringWithFormat("Custom %@", gameController.name)
                 
